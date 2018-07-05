@@ -84,13 +84,28 @@ class BoardController {
         try {
             return ResponseFormat(
                     result = ResultCode.SUCCESS,
-                    data= articles)
+                    data= boardService.update(article))
 
         }catch (e: Exception) {
             return ResponseFormat(result=ResultCode.SERVERERROR, errorMessage = e.message!!)
         }
     }
 
+    /*
+     * 삭제
+     */
+    @DeleteMapping("/{id}")
+    fun delete(@PathVariable("id") articleId: Int) : ResponseFormat{
 
+        try {
+
+            return ResponseFormat(
+                    result=ResultCode.SUCCESS,
+                    data=boardService.delete(articleId))
+
+        }catch (e: Exception) {
+            return ResponseFormat(ResultCode.SERVERERROR, errorMessage = e.message!!)
+        }
+    }
 
 }
