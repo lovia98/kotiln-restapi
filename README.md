@@ -6,6 +6,6 @@
 
 3. Swagger2
 
-4. JPA 적용 주의할 점
+4. JPA
   
    
