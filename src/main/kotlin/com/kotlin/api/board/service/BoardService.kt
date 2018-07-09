@@ -1,6 +1,11 @@
 package com.kotlin.api.board.service
 
+import com.kotlin.api.board.controller.articles
 import com.kotlin.api.board.model.Article
+import com.kotlin.api.board.repository.BoardRepository
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Service
+import java.util.*
 
 /*
 * 게시물 CURD interface
@@ -8,21 +13,75 @@ import com.kotlin.api.board.model.Article
 interface BoardService {
 
     open fun create(article: Article?) : Any?
-    open fun detail(articleId: Int?): Article?
+    open fun list() : Any?
+    open fun detail(articleId: Int?): Any?
     open fun update(article: Article?) : Any?
     open fun delete(articleId: Int?): Any?
 
 }
 
-/*
- * Article 리스트에서 maxId구하기
- */
-fun MutableList<Article>.maxId() : Int {
+@Service
+class BoardServiceImpl : BoardService {
 
-    if (size == 0) return 0
+    @Autowired
+    lateinit var boardRepository : BoardRepository
 
-    val list = this.toList()
-    val max = list.asSequence().maxBy { it->it.articleId?:0 }
 
-    return max?.articleId?:0
+    /*
+     * 저장
+     */
+    override fun create(article: Article?) :Int {
+
+        article ?: throw IllegalArgumentException("article can be null");
+
+        boardRepository.save(article)
+
+        return article.articleId?:0
+    }
+
+    /*
+     * 리스트
+    */
+    override fun list(): Any? {
+        return boardRepository.findAll()
+    }
+
+    /*
+     * 조회
+    */
+    override fun detail(boardId: Int?) : Optional<Article>? {
+
+        boardId?: throw IllegalArgumentException("articleId can be null")
+
+        return boardRepository.findById(boardId)
+    }
+    /*
+     * 수정
+     */
+    override fun update(article: Article?): Int {
+
+        article ?: throw IllegalArgumentException("article can be null")
+
+        article.articleId ?: throw IllegalArgumentException("articleId can be null")
+
+        boardRepository.save(article)
+
+        return article.articleId?:0
+    }
+
+    /*
+     * 삭제
+     */
+    override fun delete(articleId: Int?): Int {
+
+        articleId ?: throw IllegalArgumentException("articleId can be null")
+
+        try {
+            boardRepository.deleteById(articleId)
+            return 1
+
+        }catch (e: Exception) {
+            return 0
+        }
+    }
 }

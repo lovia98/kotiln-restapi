@@ -1,1 +1,3 @@
-spring.application.name=kotinApi
+spring:
+  application:
+    name: api

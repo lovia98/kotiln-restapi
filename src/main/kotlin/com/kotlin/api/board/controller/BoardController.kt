@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
 
 import com.kotlin.api.board.service.*
+import org.slf4j.LoggerFactory
+import java.util.logging.Logger
 
 var articles = mutableListOf<Article>()
 
@@ -20,15 +22,20 @@ var articles = mutableListOf<Article>()
 @RequestMapping("/board")
 class BoardController {
 
+    val logger: org.slf4j.Logger = LoggerFactory.getLogger(BoardController::class.java)
+
+
     @Autowired
     lateinit var boardService: BoardService
-
 
     /*
      * 게시물 저장
      */
     @PostMapping
     fun createBoard(@RequestBody article: Article?) : ResponseFormat {
+
+        logger.info("save Start-----")
+        logger.debug("param : ${article}")
 
         try {
             return ResponseFormat(
@@ -50,7 +57,7 @@ class BoardController {
         try {
             return ResponseFormat(
                     result = ResultCode.SUCCESS,
-                    data = articles)
+                    data = boardService.list())
 
         }catch(e: Exception) {
             return ResponseFormat(ResultCode.SERVERERROR,
